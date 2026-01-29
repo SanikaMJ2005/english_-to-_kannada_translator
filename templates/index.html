@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>English → Kannada Translator</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>English → Kannada Translator</h1>
+  <form method="post">
+    <textarea name="text" rows="5" placeholder="Enter English text...">{{ src }}</textarea>
+    <div style="margin-top:8px;"><button type="submit">Translate</button></div>
+  </form>
+
+  {% if result %}
+  <h2>Translation</h2>
+  <div class="result">{{ result }}</div>
+  <p><em>Engine: {{ used }}</em></p>
+  <div id="translation" data-text="{{ result | e }}"></div>
+  <div class="audio">
+    <audio id="player" controls></audio>
+    <a id="download-link" class="btn" href="#">Download MP3</a>
+  </div>
+  <script>
+    (function(){
+      var el = document.getElementById('translation');
+      if(!el) return;
+      var text = el.dataset.text || '';
+      var src = '{{ url_for("audio") }}' + '?text=' + encodeURIComponent(text);
+      var player = document.getElementById('player');
+      var link = document.getElementById('download-link');
+      if(player) player.src = src;
+      if(link) { link.href = src; link.setAttribute('download', 'translation.mp3'); }
+    })();
+  </script>
+  {% endif %}
+
+  <hr>
+  <p>Tip: The app uses `googletrans` and `gTTS` if installed; otherwise it falls back to a small dictionary and TTS may be unavailable.</p>
+</body>
+</html>
